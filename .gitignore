@@ -6,3 +6,6 @@ next-env.d.ts
 .env*.local
 .vercel
 coverage
+# OneDrive sets a file aside as "name-COMPUTERNAME.ext" when two computers edit it at once. Never commit those.
+*-DESKTOP-K20GM5A*
+*-Sibabalwe-GPC*

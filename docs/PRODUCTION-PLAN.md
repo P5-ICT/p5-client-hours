@@ -1,6 +1,8 @@
 # Plan: From Demo to Real System
 
-This replaces the short list in `NEXT-STEPS.md`. It follows the demo as built (Next.js, TypeScript, Tailwind, Vitest) and moves it to Supabase and Vercel.
+This replaces the short list in `NEXT-STEPS.md`. It follows the demo as built (Next.js, TypeScript, Tailwind, Vitest) and moves it to a real system.
+
+> **Update, 13 Nov 2026: the hosting changed.** The system is built as two projects: `frontend/` on Vercel and `backend/` (Express and Postgres) on Render, with its own sign-in instead of Supabase. Where this plan says Supabase, Auth or row level security, read: Render Postgres, the API's own email and password sign-in, and permission checks in the API plus database triggers. Everything else in the plan (decisions, roles, phases, privacy) still applies. What was built, and what is still open, is in `docs/DEPLOYMENT.md` and the README.
 
 ## 1. What "real" means (definition of done)
 
