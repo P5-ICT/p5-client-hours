@@ -6,6 +6,7 @@
 # addresses and redeploy (docs/DEPLOYMENT.md, step 3).
 databases:
   - name: p5-hours-db
+    region: frankfurt # closest Render region to South Africa. A service and its database must share a region.
     plan: 0.1c-256mb # the cheapest paid plan. The free database is deleted after 30 days, so never use it for real data
     databaseName: p5hours
     user: p5hours
@@ -13,6 +14,7 @@ databases:
 services:
   - type: web
     name: p5-hours-api
+    region: frankfurt
     runtime: node
     rootDir: backend
     plan: 0.5c-512mb # the cheapest paid plan. Free web services sleep when idle, which breaks the shared timer experience
@@ -21,7 +23,7 @@ services:
     healthCheckPath: /health
     envVars:
       - key: NODE_VERSION
-        value: 22
+        value: "22"
       - key: NODE_ENV
         value: production
       - key: DATABASE_URL
@@ -41,13 +43,14 @@ services:
       - key: ADMIN_NAME
         value: Admin
       - key: RESEND_API_KEY
-        sync: false
+        sync: false # type none to run without email for now (the admin then copies invite links by hand)
       - key: MAIL_FROM
-        sync: false
+        value: "P5 Client Hours <onboarding@resend.dev>" # only delivers to your own address until your domain is verified in Resend; then change it
 
   # The website people use. It only talks to the API above; it never touches the database.
   - type: web
     name: p5-hours-web
+    region: frankfurt
     runtime: node
     rootDir: frontend
     plan: 0.5c-512mb
@@ -56,13 +59,14 @@ services:
     healthCheckPath: /login
     envVars:
       - key: NODE_VERSION
-        value: 22
+        value: "22"
       - key: NEXT_PUBLIC_API_URL
         value: https://p5-hours-api.onrender.com # the API's address, no trailing slash. It is built into the site, so a change needs a redeploy.
 
   # Catches up on the 80% / 100% emails if one was missed. They are also sent straight after each approval.
   - type: cron
     name: p5-hours-alerts
+    region: frankfurt
     runtime: node
     rootDir: backend
     schedule: "0 6,10,14,18 * * 1-5" # UTC, so 08:00 to 20:00 in South Africa
@@ -70,20 +74,21 @@ services:
     startCommand: npm run alerts
     envVars:
       - key: NODE_VERSION
-        value: 22
+        value: "22"
       - key: DATABASE_URL
         fromDatabase:
           name: p5-hours-db
           property: connectionString
       - key: RESEND_API_KEY
-        sync: false
+        sync: false # type none to run without email for now (the admin then copies invite links by hand)
       - key: MAIL_FROM
-        sync: false
+        value: "P5 Client Hours <onboarding@resend.dev>" # only delivers to your own address until your domain is verified in Resend; then change it
 
   # Once a day: emails the managers when a cycle has just ended, and reminds anyone who left a timer running overnight.
   # Each message is claimed in the database first, so a repeated run never sends twice.
   - type: cron
     name: p5-hours-daily
+    region: frankfurt
     runtime: node
     rootDir: backend
     schedule: "0 5 * * *" # UTC, so 07:00 in South Africa
@@ -91,7 +96,7 @@ services:
     startCommand: npm run daily
     envVars:
       - key: NODE_VERSION
-        value: 22
+        value: "22"
       - key: DATABASE_URL
         fromDatabase:
           name: p5-hours-db
@@ -99,6 +104,6 @@ services:
       - key: APP_URL
         sync: false # the website address, used for the links in the emails
       - key: RESEND_API_KEY
-        sync: false
+        sync: false # type none to run without email for now (the admin then copies invite links by hand)
       - key: MAIL_FROM
-        sync: false
+        value: "P5 Client Hours <onboarding@resend.dev>" # only delivers to your own address until your domain is verified in Resend; then change it

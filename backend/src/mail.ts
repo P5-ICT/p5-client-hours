@@ -15,8 +15,9 @@ export interface Mailer {
 export function createMailer(env: Pick<Env, "RESEND_API_KEY" | "MAIL_FROM">): Mailer {
   return {
     async send(mail) {
-      if (!env.RESEND_API_KEY) {
-        console.log(`[mail not sent: RESEND_API_KEY missing] to=${mail.to.join(",")} subject="${mail.subject}"`);
+      // "none" lets a first deploy go ahead before the Resend account exists.
+      if (!env.RESEND_API_KEY || env.RESEND_API_KEY.trim().toLowerCase() === "none") {
+        console.log(`[mail not sent: email not configured] to=${mail.to.join(",")} subject="${mail.subject}"`);
         return false;
       }
       const res = await fetch("https://api.resend.com/emails", {

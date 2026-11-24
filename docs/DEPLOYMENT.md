@@ -50,9 +50,9 @@ If you skip email, everything still works: the admin copies each "set your passw
 |---|---|
 | `ADMIN_EMAIL` | your work email (the first admin) |
 | `ADMIN_PASSWORD` | a long password, at least 10 characters |
-| `RESEND_API_KEY`, `MAIL_FROM` | from step 2 (can be left empty for now) |
+| `RESEND_API_KEY` | the key from step 2. If you do not have it yet, type `none`: everything works except emails, and the admin copies invite links by hand. Replace it later in the service's **Environment** tab |
 
-   Each of the two jobs asks for its own copy of `RESEND_API_KEY` and `MAIL_FROM` (and the daily job for `APP_URL`). Use the same values.
+   Each of the two jobs asks for its own copy of `RESEND_API_KEY` (and the daily job for `APP_URL`). Use the same values. `MAIL_FROM` already has a starting value; once your domain is verified in Resend, change it in all three services.
 
 3. Wait for the first deploy, then open `https://p5-hours-api.onrender.com/health`. It should show `{"ok":true}`.
 4. **Check the two addresses.** `render.yaml` assumes the services get the addresses `https://p5-hours-api.onrender.com` and `https://p5-hours-web.onrender.com`. Look at each service's real address in Render. If one has a suffix (because the name was taken), correct these and redeploy:
@@ -66,7 +66,7 @@ If you skip email, everything still works: the admin copies each "set your passw
    `NEXT_PUBLIC_API_URL` is built into the website, so after changing it press **Manual Deploy > Deploy latest commit** on `p5-hours-web`. No trailing slash on any of them.
 5. On first start the API creates the tables and your admin account. After you have signed in once, **delete `ADMIN_PASSWORD`** from the `p5-hours-api` environment.
 
-Plans: `render.yaml` asks for Render's cheapest paid database (`0.1c-256mb`) and cheapest paid web plan (`0.5c-512mb`) for both web services. These names were checked against Render's Blueprint documentation in November 2026; Render also validates the file when you create the Blueprint and will say which line it does not accept. Render's free web service sleeps when idle (the first visit after a quiet period takes about a minute, and a running timer's page goes stale), and the free database is deleted after 30 days. Do not use either for real hours.
+Region: everything is created in **Frankfurt**, the closest Render region to South Africa. Plans: `render.yaml` asks for Render's cheapest paid database (`0.1c-256mb`) and cheapest paid web plan (`0.5c-512mb`) for both web services. These names were checked against Render's Blueprint documentation in November 2026; Render also validates the file when you create the Blueprint and will say which line it does not accept. Render's free web service sleeps when idle (the first visit after a quiet period takes about a minute, and a running timer's page goes stale), and the free database is deleted after 30 days. Do not use either for real hours.
 
 ## 4. Set up the real data (as admin)
 
