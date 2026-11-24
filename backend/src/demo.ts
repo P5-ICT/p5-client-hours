@@ -10,7 +10,7 @@ import type { Db } from "./db.js";
 import type { Env } from "./env.js";
 import { localDayNumber, ymdOfDayNumber, type AppRole } from "./rules.js";
 
-export const DEMO_DOMAIN = "demo.example";
+export const DEMO_DOMAIN = "pillar5group.com";
 export const isDemoEmail = (email: string) => email.trim().toLowerCase().endsWith(`@${DEMO_DOMAIN}`);
 
 const TIMEZONE = "Africa/Johannesburg";
@@ -101,11 +101,13 @@ const weekdaysBetween = (from: number, to: number) => Array.from({ length: Math.
  */
 export async function seedDemo(db: Db, env: DemoEnv, now: Date = new Date()): Promise<SeedResult> {
   const password = env.DEMO_PASSWORD ?? "";
-  if (password.length < 10) {
-    console.warn("Demo mode is on but DEMO_PASSWORD is missing or shorter than 10 characters, so no demo accounts were made.");
+  if (password.length < 7) {
+    console.warn("Demo mode is on but DEMO_PASSWORD is missing or shorter than 7 characters, so no demo accounts were made.");
     return "skipped";
   }
   const hash = await hashPassword(password);
+  // Earlier trials used @demo.example. Those accounts are switched off now that the demo uses the company domain.
+  await db.query("update users set active = false where email like '%@demo.example'");
   const like = `%@${DEMO_DOMAIN}`;
   const existing = (await db.query<{ n: number }>("select count(*)::int as n from users where email like $1", [like])).rows[0]!.n;
   const reset = env.DEMO_RESET === "1";
@@ -118,7 +120,7 @@ export async function seedDemo(db: Db, env: DemoEnv, now: Date = new Date()): Pr
 
   if (reset) {
     // Never wipe a system that real people have started to use.
-    const real = await db.query("select 1 from users where active and email not like $1 and app_role <> 'admin'", [like]);
+    const real = await db.query("select 1 from users where active and email not like $1 and email not like '%@demo.example' and app_role <> 'admin'", [like]);
     if (real.rowCount) {
       console.warn("DEMO_RESET was ignored: this database has real accounts besides the demo ones and an admin.");
       return "refused";

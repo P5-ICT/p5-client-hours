@@ -76,7 +76,7 @@ describe("managers adding people", () => {
 });
 
 describe("adding people in the trial", () => {
-  it("only allows demo.example addresses, so the trial cannot email real people", async () => {
+  it("only allows pillar5group.com addresses, so the trial cannot email real people", async () => {
     const env = { DEMO_DATA: "1", DEMO_PASSWORD: "demo-password-1" };
     const h = await createHarness(env);
     await seedDemo(h.db, env);
@@ -89,13 +89,13 @@ describe("adding people in the trial", () => {
         ? await h.api.post("/api/people").set(h.as(t)).send({ name: "Real Person", email: "real.person@pillar5.co.za" })
         : await h.api.post("/api/admin/users").set(h.as(t)).send({ name: "Real Person", email: "real.person@pillar5.co.za" });
       expect(refused.status).toBe(403);
-      expect(refused.body.error).toMatch(/demo\.example/);
+      expect(refused.body.error).toMatch(/pillar5group\.com/);
     }
     expect(h.mailer.sent).toHaveLength(0);
 
-    expect((await h.api.post("/api/people").set(h.as(manager)).send({ name: "Tester", email: "tester@demo.example" })).status).toBe(201);
+    expect((await h.api.post("/api/people").set(h.as(manager)).send({ name: "Tester", email: "tester@pillar5group.com" })).status).toBe(201);
 
-    const imp = await h.api.post("/api/admin/import").set(h.as(admin)).send({ staff: [{ name: "Real", email: "real@pillar5.co.za" }, { name: "Test", email: "test2@demo.example" }] });
+    const imp = await h.api.post("/api/admin/import").set(h.as(admin)).send({ staff: [{ name: "Real", email: "real@pillar5.co.za" }, { name: "Test", email: "test2@pillar5group.com" }] });
     expect(imp.body.people).toBe(1);
     expect(imp.body.skipped[0].reason).toMatch(/trial/);
 

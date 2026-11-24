@@ -75,13 +75,13 @@ Save, and the service restarts and creates the accounts. The log shows `Demo dat
 
 | Sign in as | Email | Good for trying |
 |---|---|---|
-| Staff | `staff@demo.example` | The timer, typing in hours, My entries |
-| Second staff | `staff2@demo.example` | A different person's view |
-| Manager | `manager@demo.example` | Approvals, reports, adding hours, typing hours in for someone else |
-| Second manager | `manager2@demo.example` | Approving what the first manager typed in |
-| CEO | `ceo@demo.example` | The same as a manager |
-| Admin | `admin@demo.example` | Team and settings, department hours |
-| Client | `client@demo.example` | What the client sees (approved hours only) |
+| Staff | `staff@pillar5group.com` | The timer, typing in hours, My entries |
+| Second staff | `staff2@pillar5group.com` | A different person's view |
+| Manager | `manager@pillar5group.com` | Approvals, reports, adding hours, typing hours in for someone else |
+| Second manager | `manager2@pillar5group.com` | Approving what the first manager typed in |
+| CEO | `ceo@pillar5group.com` | The same as a manager |
+| Admin | `admin@pillar5group.com` | Team and settings, department hours |
+| Client | `client@pillar5group.com` | What the client sees (approved hours only) |
 
 The sample data tells the story from the guide: last cycle ended 7.5 hours over, this cycle is 33 of 50 hours with 11 hours waiting, and one entry was typed in by a manager.
 

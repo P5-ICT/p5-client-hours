@@ -24,7 +24,7 @@ export const demoMayAdd = (ctx: Pick<AppContext, "env">, actor: Pick<AuthUser, "
  * and by managers, who may only add staff and client accounts (the route decides which roles are allowed).
  */
 export async function createPerson(ctx: AppContext, actor: AuthUser, p: NewPerson) {
-  if (!demoMayAdd(ctx, actor, p.email)) throw new HttpError(403, "In the trial, people can only be added with an email ending @demo.example.", "email");
+  if (!demoMayAdd(ctx, actor, p.email)) throw new HttpError(403, "In the trial, people can only be added with an email ending @pillar5group.com.", "email");
   const id = randomUUID();
   await ctx.db.query("insert into users (id, email, name, job_title, department_id, app_role) values ($1, $2, $3, $4, $5, $6)", [
     id,

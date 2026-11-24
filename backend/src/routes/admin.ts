@@ -219,7 +219,7 @@ export function adminRoutes(ctx: AppContext) {
             continue;
           }
           if (!demoMayAdd(ctx, req.user!, parsedEmail.data)) {
-            skipped.push({ name: p.name, reason: "In the trial, only @demo.example addresses can be added" });
+            skipped.push({ name: p.name, reason: "In the trial, only @pillar5group.com addresses can be added" });
             continue;
           }
           const exists = await t.query("select 1 from users where email = $1", [parsedEmail.data]);

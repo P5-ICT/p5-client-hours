@@ -10,11 +10,11 @@ const demoEnv = { DEMO_DATA: "1", DEMO_PASSWORD: PASSWORD };
 
 describe("isDemoEmail", () => {
   it("recognises demo accounts and nothing else", () => {
-    expect(isDemoEmail("staff@demo.example")).toBe(true);
-    expect(isDemoEmail(" MANAGER@Demo.Example ")).toBe(true);
+    expect(isDemoEmail("staff@pillar5group.com")).toBe(true);
+    expect(isDemoEmail(" MANAGER@Pillar5Group.com ")).toBe(true);
     expect(isDemoEmail("someone@pillar5.co.za")).toBe(false);
-    expect(isDemoEmail("a@demo.example.evil.com")).toBe(false);
-    expect(isDemoEmail("demo.example@gmail.com")).toBe(false);
+    expect(isDemoEmail("a@pillar5group.com.evil.com")).toBe(false);
+    expect(isDemoEmail("pillar5group.com@gmail.com")).toBe(false);
   });
 });
 
@@ -23,7 +23,7 @@ describe("seeding the demo data", () => {
     const h = await createHarness();
     expect(await seedDemo(h.db, { DEMO_PASSWORD: PASSWORD })).toBe("seeded");
 
-    const users = await h.db.query<{ email: string; app_role: string }>("select email, app_role from users where email like '%@demo.example'");
+    const users = await h.db.query<{ email: string; app_role: string }>("select email, app_role from users where email like '%@pillar5group.com'");
     expect(users.rowCount).toBe(DEMO_PEOPLE.length);
     for (const role of ["admin", "manager", "ceo", "staff", "client"]) expect(users.rows.some((u) => u.app_role === role)).toBe(true);
     expect(users.rows.filter((u) => u.app_role === "manager")).toHaveLength(2); // two, so approving each other's work can be tried
@@ -79,7 +79,7 @@ describe("seeding the demo data", () => {
     vi.spyOn(console, "warn").mockImplementation(() => {});
     expect(await seedDemo(h.db, { DEMO_PASSWORD: undefined })).toBe("skipped");
     expect(await seedDemo(h.db, { DEMO_PASSWORD: "short" })).toBe("skipped");
-    expect((await h.db.query("select 1 from users where email like '%@demo.example'")).rowCount).toBe(0);
+    expect((await h.db.query("select 1 from users where email like '%@pillar5group.com'")).rowCount).toBe(0);
   });
 });
 
