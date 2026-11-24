@@ -41,6 +41,27 @@ If the push is refused with a "permission" error, the signed-in account does not
 
 If you skip email, everything still works: the admin copies each "set your password" link from the **Team and settings** screen and sends it by WhatsApp. The 80% and 100% alerts, the end-of-cycle email and the timer reminder need email.
 
+## Free trial first (costs nothing)
+
+`render.yaml` creates paid services (about US$24.50 a month plus US$1 or more for each scheduled job, as shown on Render's Blueprint screen). To try the system without paying, use `render.free.yaml` instead:
+
+1. Render dashboard > **New > Blueprint** > choose the repository.
+2. Set **Blueprint Path** to `render.free.yaml` (the field under "Branch").
+3. Fill in the three prompts (`ADMIN_EMAIL`, `ADMIN_PASSWORD`, `RESEND_API_KEY`, which can be `none`) and press **Deploy Blueprint**. Then follow steps 3 to 6 below as usual.
+
+| | Free trial (`render.free.yaml`) | Real use (`render.yaml`) |
+|---|---|---|
+| Cost | $0 | about $24.50 a month, plus the scheduled jobs |
+| Database | **Deleted 30 days after it is created**, no backups, 1 GB | Kept, with backups |
+| Website and server | Go to sleep after 15 minutes without a visit. The next visit waits about a minute | Always on |
+| 80% and 100% emails | Yes | Yes |
+| End-of-cycle email and forgotten-timer reminder | No | Yes (the two scheduled jobs) |
+| Use it for | Showing the team, trying it out, a short pilot with test data | Real hours that go to the client |
+
+Render allows one free database per workspace. When the trial works and you are ready for real hours, delete the trial services and create a new Blueprint from `render.yaml`. Nothing carries over from the free database, so set up the real data again (step 4).
+
+If your Render workspace shows a **Payment failed** banner, fix the card (or ask whoever pays for the workspace) before creating any paid service from `render.yaml`. The free trial does not need a working card.
+
 ## 3. Deploy on Render
 
 1. Render needs permission to read the repository. **Account Settings > GitHub > Connect**, install the Render app on the **P5-ICT** organisation and give it `p5-client-hours`. (An owner of the organisation has to approve this the first time.)

@@ -1,0 +1,72 @@
+# A free trial of P5 Client Hours on Render. It costs nothing, and it is NOT for real hours.
+#
+# Use it to show the system to the team and to try it out. When you are ready for real use, create a new Blueprint from
+# render.yaml instead (see docs/DEPLOYMENT.md, "Free trial first").
+#
+# What is different from render.yaml, and why it matters:
+#  - The database is free but is DELETED 30 days after it is created (14 days of grace to upgrade it first).
+#    It also has no backups. Never put real hours in it.
+#  - The two web services are free, so each one goes to sleep after 15 minutes without a visit. The next visit
+#    waits about a minute while it wakes up. Nothing is lost: timers and entries live in the database.
+#  - There are no scheduled jobs (Render charges a minimum for each one). The 80% and 100% emails are still sent
+#    straight after each approval. What is missing: the end-of-cycle email and the forgotten-timer reminder.
+#  - Render allows only one free database per workspace.
+#
+# Render dashboard > New > Blueprint > this repo > set "Blueprint Path" to render.free.yaml.
+databases:
+  - name: p5-hours-db
+    region: frankfurt
+    plan: free
+    databaseName: p5hours
+    user: p5hours
+
+services:
+  - type: web
+    name: p5-hours-api
+    region: frankfurt
+    runtime: node
+    rootDir: backend
+    plan: free
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: p5-hours-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        value: https://p5-hours-web.onrender.com # the website's address, no trailing slash
+      - key: APP_URL
+        value: https://p5-hours-web.onrender.com # the same address, used in invite and reset emails
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false # first start only; remove it afterwards
+      - key: ADMIN_NAME
+        value: Admin
+      - key: RESEND_API_KEY
+        sync: false # type none to run without email for now (the admin then copies invite links by hand)
+      - key: MAIL_FROM
+        value: "P5 Client Hours <onboarding@resend.dev>" # only delivers to your own address until your domain is verified in Resend
+
+  - type: web
+    name: p5-hours-web
+    region: frankfurt
+    runtime: node
+    rootDir: frontend
+    plan: free
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /login
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NEXT_PUBLIC_API_URL
+        value: https://p5-hours-api.onrender.com # the API's address, no trailing slash. It is built into the site, so a change needs a redeploy.
