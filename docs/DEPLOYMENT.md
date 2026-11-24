@@ -66,7 +66,7 @@ If you skip email, everything still works: the admin copies each "set your passw
    `NEXT_PUBLIC_API_URL` is built into the website, so after changing it press **Manual Deploy > Deploy latest commit** on `p5-hours-web`. No trailing slash on any of them.
 5. On first start the API creates the tables and your admin account. After you have signed in once, **delete `ADMIN_PASSWORD`** from the `p5-hours-api` environment.
 
-Plans: `render.yaml` asks for a paid database and the `starter` plan for both web services. Render's free web service sleeps when idle (the first visit after a quiet period takes about a minute, and a running timer's page goes stale), and the free database is deleted after 30 days. Do not use either for real hours.
+Plans: `render.yaml` asks for Render's cheapest paid database (`0.1c-256mb`) and cheapest paid web plan (`0.5c-512mb`) for both web services. These names were checked against Render's Blueprint documentation in November 2026; Render also validates the file when you create the Blueprint and will say which line it does not accept. Render's free web service sleeps when idle (the first visit after a quiet period takes about a minute, and a running timer's page goes stale), and the free database is deleted after 30 days. Do not use either for real hours.
 
 ## 4. Set up the real data (as admin)
 

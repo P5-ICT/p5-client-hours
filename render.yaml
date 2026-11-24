@@ -6,7 +6,7 @@
 # addresses and redeploy (docs/DEPLOYMENT.md, step 3).
 databases:
   - name: p5-hours-db
-    plan: basic-256mb # the free database expires after 30 days; use a paid plan for real data
+    plan: 0.1c-256mb # the cheapest paid plan. The free database is deleted after 30 days, so never use it for real data
     databaseName: p5hours
     user: p5hours
 
@@ -15,7 +15,7 @@ services:
     name: p5-hours-api
     runtime: node
     rootDir: backend
-    plan: starter # free web services sleep when idle, which breaks the shared timer experience
+    plan: 0.5c-512mb # the cheapest paid plan. Free web services sleep when idle, which breaks the shared timer experience
     buildCommand: npm ci --include=dev && npm run build
     startCommand: npm start
     healthCheckPath: /health
@@ -50,7 +50,7 @@ services:
     name: p5-hours-web
     runtime: node
     rootDir: frontend
-    plan: starter
+    plan: 0.5c-512mb
     buildCommand: npm ci --include=dev && npm run build
     startCommand: npm start
     healthCheckPath: /login
