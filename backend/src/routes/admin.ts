@@ -7,14 +7,16 @@ import { requireAuth, requireRole } from "../auth.js";
 import { HttpError, handler, parse } from "../http.js";
 import { isDemoEmail } from "../demo.js";
 import { issueSetPasswordLink } from "../invites.js";
-import { APP_ROLES, isAdmin } from "../rules.js";
+import { createPerson, demoMayAdd } from "../people.js";
+import { APP_ROLES, isAdmin, type AppRole } from "../rules.js";
 
 const roleEnum = z.enum(APP_ROLES as [string, ...string[]]);
 const email = z.string().trim().toLowerCase().email();
 const shortId = (prefix: string) => `${prefix}_${randomUUID().slice(0, 8)}`;
 
 
-export function adminRoutes({ db, env, mailer }: AppContext) {
+export function adminRoutes(ctx: AppContext) {
+  const { db, env, mailer } = ctx;
   const r = Router();
   r.use(requireAuth(db, env.JWT_SECRET), requireRole(isAdmin));
 
@@ -54,18 +56,7 @@ export function adminRoutes({ db, env, mailer }: AppContext) {
     "/users",
     handler(async (req, res) => {
       const b = parse(userBody, req.body);
-      const id = randomUUID();
-      await db.query("insert into users (id, email, name, job_title, department_id, app_role) values ($1, $2, $3, $4, $5, $6)", [
-        id,
-        b.email,
-        b.name,
-        b.jobTitle,
-        b.departmentId,
-        b.appRole,
-      ]);
-      await audit(db, req.user!.id, "create", "user", id, { email: b.email, appRole: b.appRole });
-      const invite = await issueSetPasswordLink(db, mailer, env.APP_URL, { id, email: b.email, name: b.name }, "invite");
-      res.status(201).json({ id, ...invite });
+      res.status(201).json(await createPerson(ctx, req.user!, { ...b, appRole: b.appRole as AppRole }));
     }),
   );
 
@@ -225,6 +216,10 @@ export function adminRoutes({ db, env, mailer }: AppContext) {
           const parsedEmail = email.safeParse(p.email ?? "");
           if (!parsedEmail.success) {
             skipped.push({ name: p.name, reason: "No valid email address" });
+            continue;
+          }
+          if (!demoMayAdd(ctx, req.user!, parsedEmail.data)) {
+            skipped.push({ name: p.name, reason: "In the trial, only @demo.example addresses can be added" });
             continue;
           }
           const exists = await t.query("select 1 from users where email = $1", [parsedEmail.data]);

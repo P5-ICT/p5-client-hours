@@ -18,6 +18,10 @@ export const seesEverything = (role: AppRole) => role !== "staff" && role !== "c
 export const isAdmin = (role: AppRole) => role === "admin";
 
 /** Management (managers, the CEO and admins) can log time for other people and add hours to a cycle. */
+/** Managers, the CEO and admins add people. A manager or CEO can only create these kinds of account; an admin can create any. */
+export const canAddPeople = seesEverything;
+export const MANAGER_ASSIGNABLE_ROLES = ["staff", "client"] as const;
+
 export const canLogForOthers = seesEverything;
 export const canExtendHours = seesEverything;
 

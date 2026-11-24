@@ -161,7 +161,7 @@ To develop against a real Postgres instead, copy `backend/.env.example` to `back
 
 ## Day-to-day
 
-- **New person:** Team and settings > Add a person.
+- **New person:** Team and settings > Add a person. Managers and the CEO can add staff and client accounts for their team; only an administrator can add managers, the CEO or other administrators. The person gets an email to choose their password.
 - **Someone left:** Deactivate them. Their old entries stay. They cannot sign in at once.
 - **Forgot password:** the person uses "Forgot your password?", or the admin presses **Reset password** next to their name. Reset links work for 2 hours; invites for 7 days. A reset clears a lock-out.
 - **Changed password:** the person opens their name at the top right > Change password. Every other device is signed out.

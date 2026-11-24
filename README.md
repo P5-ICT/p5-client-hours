@@ -43,7 +43,7 @@ Sign in as the admin, then add a project and a few people under **Management > T
 | Account | Can |
 |---|---|
 | Staff | Log time, delete their own pending entries, see the overview (other people's hours only, no notes) |
-| Manager, CEO | Everything staff can, plus see all entries, approve or reject (never their own), log time for other people, add hours to a cycle, and pull reports |
+| Manager, CEO | Everything staff can, plus see all entries, approve or reject (never their own), log time for other people, add hours to a cycle, pull reports, and **add the people on their team** (staff and client accounts only) |
 | Admin | See all entries, manage people, projects, department hours and settings, log time for others and add hours to a cycle. Does not approve hours |
 | Client | See approved hours for the client, nothing else |
 

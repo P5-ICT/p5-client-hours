@@ -14,6 +14,7 @@ Two projects in one repo. `frontend/` is Next.js (App Router) + TypeScript + Tai
 
 ## Backend (`backend/`)
 
+- Managers and the CEO may add staff and client accounts only (`/api/people`); anything above that stays with an administrator (`/api/admin`). Both go through `createPerson` in `src/people.ts`, so there is one way to add a person.
 - The server is the source of truth for permissions. Every route checks the role (`requireRole` in `src/auth.ts`, rules in `src/rules.ts`). Never trust the frontend to hide things.
 - Rules that protect the data are also in SQL (`src/migrations`): reviewed entries are final, new entries are forced to pending, nobody reviews their own entry. Change schema with a new numbered migration file; never edit one that has been applied.
 - `src/rules.ts` is pure and has no database or HTTP. Put new business rules there and test them in `test/rules.test.ts`. API behaviour is tested in `test/api.test.ts` against real Postgres (PGlite).

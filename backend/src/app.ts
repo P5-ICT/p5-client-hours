@@ -10,6 +10,7 @@ import { authRoutes } from "./routes/auth.js";
 import { dataRoutes } from "./routes/data.js";
 import { entryRoutes } from "./routes/entries.js";
 import { extensionRoutes } from "./routes/extensions.js";
+import { peopleRoutes } from "./routes/people.js";
 import { timerRoutes } from "./routes/timer.js";
 
 export interface AppContext {
@@ -47,6 +48,7 @@ export function createApp(ctx: AppContext): Express {
   app.use("/api/timer", timerRoutes(ctx));
   app.use("/api/entries", entryRoutes(ctx));
   app.use("/api/extensions", extensionRoutes(ctx));
+  app.use("/api/people", peopleRoutes(ctx));
   app.use("/api/admin", adminRoutes(ctx));
 
   app.use((_req, _res, next) => next(new HttpError(404, "Not found.")));

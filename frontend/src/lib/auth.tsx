@@ -92,3 +92,5 @@ export function homeFor(role: AppRole): string {
 
 export const canApproveRole = (role: AppRole) => role === "manager" || role === "ceo";
 export const isAdminRole = (role: AppRole) => role === "admin";
+/** Managers, the CEO and admins add people. Managers and the CEO can add staff and client accounts only. */
+export const canAddPeopleRole = (role: AppRole) => role === "manager" || role === "ceo" || role === "admin";

@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { approveTimerEntries, parseSettings, reviewEntry, type FieldError } from "@/lib/actions";
 import { ApiError, api, type InviteResult } from "@/lib/api";
-import { canApproveRole, isAdminRole } from "@/lib/auth";
+import { canAddPeopleRole, canApproveRole, isAdminRole } from "@/lib/auth";
 import { fmtH } from "@/lib/dates";
 import { useStore } from "@/lib/store";
 import type { AppRole } from "@/lib/types";
@@ -211,6 +211,8 @@ function DepartmentHours() {
 export function SetupView() {
   const { data, me, mutate, showToast } = useStore();
   const admin = isAdminRole(me.appRole);
+  // Managers and the CEO add the people on their team (staff and clients). Only an administrator can create the other kinds.
+  const canAdd = canAddPeopleRole(me.appRole);
   const st = data.settings;
   const [settingsError, setSettingsError] = useState<FieldError | null>(null);
   const [importError, setImportError] = useState<FieldError | null>(null);
@@ -252,7 +254,11 @@ export function SetupView() {
     const name = get("name");
     const sent = await mutate(
       null,
-      () => api.addUser({ name, email: get("email"), jobTitle: get("title"), departmentId: get("dept") || null, appRole: get("access") as AppRole }),
+      () => {
+        const person = { name, email: get("email"), jobTitle: get("title"), departmentId: get("dept") || null };
+        const access = (get("access") || "staff") as AppRole;
+        return admin ? api.addUser({ ...person, appRole: access }) : api.addPerson({ ...person, appRole: access === "client" ? "client" : "staff" });
+      },
       { toast: false },
     );
     if (!sent.ok) return apiFail(sent.error, "p-email", setPersonError);
@@ -326,7 +332,9 @@ export function SetupView() {
   return (
     <Page>
       <PageHead title="Team and settings">
-        {admin ? "Set the hours per cycle, and add the people who use Client Hours." : "The hours per cycle, the cycle and the team. Only an admin can change these."}
+        {admin
+          ? "Set the hours per cycle, and add the people who use Client Hours."
+          : "Add the people on your team here. They get an email to choose their password. Only an administrator can change the hours and settings."}
       </PageHead>
 
       <Grid2>
@@ -373,7 +381,7 @@ export function SetupView() {
           </form>
         </Card>
 
-        {admin && (
+        {canAdd && (
           <Card>
             <h3 className="font-bold">Add a person</h3>
             <p className="text-sm text-muted">They get an email with a link to choose their password.</p>
@@ -403,7 +411,9 @@ export function SetupView() {
               </Row2>
               <Field label="Access" htmlFor="p-access">
                 <select id="p-access" name="access" defaultValue="staff">
-                  {(Object.keys(ACCESS_LABELS) as AppRole[]).map((r) => (
+                  {(Object.keys(ACCESS_LABELS) as AppRole[])
+                    .filter((r) => admin || r === "staff" || r === "client")
+                    .map((r) => (
                     <option key={r} value={r}>
                       {ACCESS_LABELS[r]}
                     </option>
@@ -418,12 +428,14 @@ export function SetupView() {
                 </Button>
               </Buttons>
             </form>
-            <form noValidate onSubmit={addDepartment} className="flex flex-wrap items-end gap-2 border-t border-line pt-3">
-              <Field label="New department" htmlFor="dp-name">
-                <input id="dp-name" name="department" type="text" autoComplete="off" />
-              </Field>
-              <Button type="submit">Add department</Button>
-            </form>
+            {admin && (
+              <form noValidate onSubmit={addDepartment} className="flex flex-wrap items-end gap-2 border-t border-line pt-3">
+                <Field label="New department" htmlFor="dp-name">
+                  <input id="dp-name" name="department" type="text" autoComplete="off" />
+                </Field>
+                <Button type="submit">Add department</Button>
+              </form>
+            )}
           </Card>
         )}
       </Grid2>

@@ -118,6 +118,9 @@ export const api = {
   saveSettings: (b: { clientName: string; budgetHours: number; cycleDays: number; minTimerMinutes?: number; anchor: string }) => request("PUT", "/api/admin/settings", b),
   addUser: (b: { name: string; email: string; jobTitle: string; departmentId: string | null; appRole: AppRole }) =>
     request<InviteResult & { id: string }>("POST", "/api/admin/users", b),
+  // Managers and the CEO add staff and client accounts; only an administrator can add the other kinds.
+  addPerson: (b: { name: string; email: string; jobTitle: string; departmentId: string | null; appRole: "staff" | "client" }) =>
+    request<InviteResult & { id: string }>("POST", "/api/people", b),
   patchUser: (id: string, b: { name?: string; jobTitle?: string; departmentId?: string | null; appRole?: AppRole; active?: boolean }) =>
     request("PATCH", `/api/admin/users/${encodeURIComponent(id)}`, b),
   inviteUser: (id: string) => request<InviteResult>("POST", `/api/admin/users/${encodeURIComponent(id)}/invite`),
