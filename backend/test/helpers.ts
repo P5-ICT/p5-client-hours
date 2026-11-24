@@ -12,13 +12,14 @@ import type { AppRole } from "../src/rules.js";
 
 export const createTestDb = (): Db => createPgliteDb();
 
-export const testEnv = (): Env =>
+export const testEnv = (overrides: Record<string, string> = {}): Env =>
   loadEnv({
     NODE_ENV: "test",
     DATABASE_URL: "unused",
     JWT_SECRET: "test-secret-test-secret-test-secret-123",
     CORS_ORIGIN: "http://localhost:3000",
     APP_URL: "http://localhost:3000",
+    ...overrides,
   } as NodeJS.ProcessEnv);
 
 export class FakeMailer implements Mailer {
@@ -41,9 +42,9 @@ export interface Harness {
   projectId: string;
 }
 
-export async function createHarness(): Promise<Harness> {
+export async function createHarness(envOverrides: Record<string, string> = {}): Promise<Harness> {
   const db = createTestDb();
-  const env = testEnv();
+  const env = testEnv(envOverrides);
   await migrate(db);
   await bootstrap(db, { ADMIN_EMAIL: undefined, ADMIN_PASSWORD: undefined, ADMIN_NAME: "Admin" });
   // Anchor two days back so "now" is always inside the first cycle, whatever time the tests run.

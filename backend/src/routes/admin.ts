@@ -5,12 +5,14 @@ import { audit } from "../audit.js";
 import type { AppContext } from "../app.js";
 import { requireAuth, requireRole } from "../auth.js";
 import { HttpError, handler, parse } from "../http.js";
+import { isDemoEmail } from "../demo.js";
 import { issueSetPasswordLink } from "../invites.js";
 import { APP_ROLES, isAdmin } from "../rules.js";
 
 const roleEnum = z.enum(APP_ROLES as [string, ...string[]]);
 const email = z.string().trim().toLowerCase().email();
 const shortId = (prefix: string) => `${prefix}_${randomUUID().slice(0, 8)}`;
+
 
 export function adminRoutes({ db, env, mailer }: AppContext) {
   const r = Router();
@@ -75,10 +77,19 @@ export function adminRoutes({ db, env, mailer }: AppContext) {
     active: z.boolean().optional(),
   });
 
+  /** In trial mode, a demo admin can play with the demo accounts but must not deactivate or reset a real person. */
+  const guardDemo = async (actorEmail: string, targetId: string) => {
+    if (env.DEMO_DATA !== "1" || !isDemoEmail(actorEmail)) return;
+    const t = await db.query<{ email: string }>("select email from users where id = $1", [targetId]);
+    const email = t.rows[0]?.email;
+    if (email && !isDemoEmail(email)) throw new HttpError(403, "Demo accounts cannot change real accounts.");
+  };
+
   r.patch(
     "/users/:id",
     handler(async (req, res) => {
       const id = String(req.params.id);
+      await guardDemo(req.user!.email, id);
       const b = parse(patchBody, req.body);
       await db.tx(async (t) => {
         const { rows } = await t.query<{ app_role: string; active: boolean }>("select app_role, active from users where id = $1 for update", [id]);
@@ -107,6 +118,7 @@ export function adminRoutes({ db, env, mailer }: AppContext) {
     "/users/:id/invite",
     handler(async (req, res) => {
       const id = String(req.params.id);
+      await guardDemo(req.user!.email, id);
       const { rows } = await db.query<{ id: string; email: string; name: string; password_hash: string | null }>(
         "select id, email, name, password_hash from users where id = $1 and active",
         [id],

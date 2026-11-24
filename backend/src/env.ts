@@ -15,6 +15,12 @@ const schema = z.object({
   ADMIN_NAME: z.string().default("Admin"),
   RESEND_API_KEY: z.string().optional(),
   MAIL_FROM: z.string().default("P5 Client Hours <onboarding@resend.dev>"),
+  /** "1" turns on trial mode: ready-made test accounts and sample data (see src/demo.ts). Never set on a real system. */
+  DEMO_DATA: z.string().optional(),
+  /** The one password all demo accounts share. At least 10 characters. */
+  DEMO_PASSWORD: z.string().optional(),
+  /** "1" wipes the demo hours and starts the sample data again, on the next start. Ignored if real people have been added. */
+  DEMO_RESET: z.string().optional(),
   /** Set to "1" on the database host if it requires TLS (Render external URLs do). */
   DATABASE_SSL: z.string().optional(),
 });

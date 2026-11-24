@@ -73,6 +73,8 @@ export interface Settings {
   anchor: string;
   /** A timer must have run at least this many minutes before it can be submitted. */
   minTimerMinutes?: number;
+  /** True on the free trial, where everything is sample data. */
+  demo?: boolean;
 }
 
 /** Extra hours management added to one cycle. */

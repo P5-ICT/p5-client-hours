@@ -117,6 +117,8 @@ export function dataRoutes({ db, env }: AppContext) {
             budgetHours: settings.budgetHours,
             cycleDays: settings.cycleDays,
             minTimerMinutes: settings.minTimerMinutes,
+            // Lets the screens say this is a trial with sample data.
+            demo: env.DEMO_DATA === "1",
             anchor: settings.cycleAnchor,
             timezone: settings.timezone,
             sample: false,

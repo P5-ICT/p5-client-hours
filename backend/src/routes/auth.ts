@@ -6,6 +6,7 @@ import { checkPassword, hashPassword, requireAuth, sha256, signSession, toAuthUs
 import type { AppContext } from "../app.js";
 import { HttpError, handler, parse } from "../http.js";
 import { issueSetPasswordLink } from "../invites.js";
+import { isDemoEmail } from "../demo.js";
 import { afterFailedLogin, isLocked, lockMinutesLeft, validatePassword } from "../rules.js";
 
 // A real bcrypt hash, so unknown emails take as long to reject as wrong passwords.
@@ -122,6 +123,8 @@ export function authRoutes({ db, env, mailer }: AppContext) {
     auth,
     limiter,
     handler(async (req, res) => {
+      // One person changing the shared demo password would lock everyone else out.
+      if (env.DEMO_DATA === "1" && isDemoEmail(req.user!.email)) throw new HttpError(403, "Demo accounts share one password, so it cannot be changed here.");
       const { current, next } = parse(z.object({ current: z.string().max(200), next: z.string().max(200) }), req.body);
       const bad = validatePassword(next);
       if (bad) throw new HttpError(400, bad.message, bad.field);

@@ -1,6 +1,7 @@
 import { createApp } from "./app.js";
 import { bootstrap } from "./bootstrap.js";
 import { createPgDb } from "./db.js";
+import { seedDemo } from "./demo.js";
 import { loadEnv } from "./env.js";
 import { createMailer } from "./mail.js";
 import { migrate } from "./migrate.js";
@@ -11,6 +12,7 @@ const db = createPgDb(env.DATABASE_URL, env.DATABASE_SSL === "1");
 const applied = await migrate(db);
 if (applied.length) console.log(`Applied migrations: ${applied.join(", ")}`);
 await bootstrap(db, env);
+if (env.DEMO_DATA === "1") console.log(`Demo data: ${await seedDemo(db, env)}`);
 
 const app = createApp({ db, env, mailer: createMailer(env) });
 const server = app.listen(env.PORT, () => console.log(`API listening on port ${env.PORT}`));

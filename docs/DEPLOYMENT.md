@@ -62,6 +62,37 @@ Render allows one free database per workspace. When the trial works and you are 
 
 If your Render workspace shows a **Payment failed** banner, fix the card (or ask whoever pays for the workspace) before creating any paid service from `render.yaml`. The free trial does not need a working card.
 
+## Test accounts for the team (free trial only)
+
+The free trial can come with ready-made test accounts and sample data, so colleagues can try the system without using your email. It is controlled by two settings on `p5-hours-api` (Render > the service > **Environment**):
+
+| Setting | Value |
+|---|---|
+| `DEMO_DATA` | `1` (already in `render.free.yaml`) |
+| `DEMO_PASSWORD` | the one password everyone will use, 10 or more characters. Add it yourself: Render only asks for it when a Blueprint is first created |
+
+Save, and the service restarts and creates the accounts. The log shows `Demo data: seeded`. Every account uses the password you chose:
+
+| Sign in as | Email | Good for trying |
+|---|---|---|
+| Staff | `staff@demo.example` | The timer, typing in hours, My entries |
+| Second staff | `staff2@demo.example` | A different person's view |
+| Manager | `manager@demo.example` | Approvals, reports, adding hours, typing hours in for someone else |
+| Second manager | `manager2@demo.example` | Approving what the first manager typed in |
+| CEO | `ceo@demo.example` | The same as a manager |
+| Admin | `admin@demo.example` | Team and settings, department hours |
+| Client | `client@demo.example` | What the client sees (approved hours only) |
+
+The sample data tells the story from the guide: last cycle ended 7.5 hours over, this cycle is 33 of 50 hours with 11 hours waiting, and one entry was typed in by a manager.
+
+Safeguards while the trial is on: a banner says it is a trial; demo accounts cannot change the shared password; a demo admin cannot deactivate or reset a real account (yours); and five wrong passwords lock an account for 5 minutes, which clears when you save the settings again.
+
+**To start the sample data again** (after testers have left a mess): add `DEMO_RESET` = `1` to `p5-hours-api`, save, wait for the restart, then **delete `DEMO_RESET`** again. It wipes the hours and rebuilds the sample story. It refuses to run if real people (other than an admin) have been added.
+
+**Changing the shared password:** change `DEMO_PASSWORD` and save. All demo sessions end and everyone uses the new one.
+
+These accounts and this switch do not exist in `render.yaml` (real use). Never set `DEMO_DATA` on a system with real hours.
+
 ## 3. Deploy on Render
 
 1. Render needs permission to read the repository. **Account Settings > GitHub > Connect**, install the Render app on the **P5-ICT** organisation and give it `p5-client-hours`. (An owner of the organisation has to approve this the first time.)

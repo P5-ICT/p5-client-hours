@@ -55,6 +55,12 @@ services:
         sync: false # type none to run without email for now (the admin then copies invite links by hand)
       - key: MAIL_FROM
         value: "P5 Client Hours <onboarding@resend.dev>" # only delivers to your own address until your domain is verified in Resend
+      # Trial mode: ready-made test accounts and sample data, so people can try it without using their own email.
+      # Never set DEMO_DATA on a real system.
+      - key: DEMO_DATA
+        value: "1"
+      - key: DEMO_PASSWORD
+        sync: false # the one password all the demo accounts share (10 or more characters). Render only asks for this when a Blueprint is first created, so on an existing one add it under Environment.
 
   - type: web
     name: p5-hours-web
