@@ -1,0 +1,27 @@
+# Visits the trial site every 10 minutes so Render's free services do not go to sleep (they sleep after 15 quiet minutes).
+#
+# Weekdays 07:00 to 19:00 South African time only (05:00 to 17:00 UTC). Do not make it run all the time: the free plan
+# gives 750 instance hours a month, shared by the website and the API, and keeping both up day and night needs about 1,460.
+# Delete this file once the services are on a paid plan.
+name: Keep the site awake
+
+on:
+  schedule:
+    - cron: "3-59/10 5-16 * * 1-5"
+  workflow_dispatch: # the "Run workflow" button, to wake the site by hand at any time
+
+permissions: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Visit the API and the website
+        run: |
+          failed=0
+          for url in https://p5-hours-api.onrender.com/health https://p5-hours-web.onrender.com/login; do
+            curl --silent --show-error --fail --output /dev/null --max-time 90 --retry 2 --retry-delay 10 \
+              --write-out "$url %{http_code} in %{time_total}s\n" "$url" || failed=1
+          done
+          exit $failed

@@ -169,3 +169,13 @@ To develop against a real Postgres instead, copy `backend/.env.example` to `back
 - **End of a cycle:** the managers get one email with the figures. Check the entries, then open the client report to copy, download or print it for the client.
 - **Forgotten timer:** the person gets one email a day while a timer has been running for more than 14 hours.
 - **Who did what:** every approval, rejection, deletion, extra-hours change, lock-out and settings change is in the `audit_log` table.
+
+## Keeping the free trial awake
+
+`.github/workflows/keep-alive.yml` visits the API and the website every 10 minutes on weekdays from 07:00 to 19:00 South African time, so testers do not wait for them to wake up. Outside those hours the first visit still takes about a minute.
+
+- To wake the site at any other time: GitHub > Actions > Keep the site awake > Run workflow.
+- Do not run it day and night. The free plan's 750 instance hours a month are shared by both services.
+- GitHub can start scheduled runs late, so the site may still sleep now and then. It also switches schedules off in a public repository after 60 days without activity.
+- If the services get different addresses, change them in that file. Delete the file when you move to a paid plan.
+

@@ -60,7 +60,7 @@ services:
       - key: DEMO_DATA
         value: "1"
       - key: DEMO_PASSWORD
-        sync: false # the one password all the demo accounts share (10 or more characters). Render only asks for this when a Blueprint is first created, so on an existing one add it under Environment.
+        sync: false # the one password all the demo accounts share (7 or more characters). Render only asks for this when a Blueprint is first created, so on an existing one add it under Environment.
 
   - type: web
     name: p5-hours-web

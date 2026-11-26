@@ -48,7 +48,7 @@ export async function createHarness(envOverrides: Record<string, string> = {}): 
   await migrate(db);
   await bootstrap(db, { ADMIN_EMAIL: undefined, ADMIN_PASSWORD: undefined, ADMIN_NAME: "Admin" });
   // Anchor two days back so "now" is always inside the first cycle, whatever time the tests run.
-  await db.query("update settings set cycle_anchor = to_char(current_date - 2, 'YYYY-MM-DD'), client_name = 'Test Client', budget_hours = 10");
+  await db.query("update settings set cycle_anchor = to_char(current_date - 2, 'YYYY-MM-DD'), client_name = 'Test Client', budget_hours = 10, min_timer_minutes = 1");
   const projectId = "p_test";
   await db.query("insert into projects (id, name) values ($1, 'Website')", [projectId]);
   const mailer = new FakeMailer();

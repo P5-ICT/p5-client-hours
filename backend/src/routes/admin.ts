@@ -24,7 +24,7 @@ export function adminRoutes(ctx: AppContext) {
     clientName: z.string().trim().min(1, "Add the client name.").max(200),
     budgetHours: z.number().positive("Hours per cycle must be more than 0."),
     cycleDays: z.number().int().min(1).max(62),
-    minTimerMinutes: z.number().int().min(1).max(240).default(1),
+    minTimerMinutes: z.number().int().min(1).max(240).default(15),
     anchor: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Pick the first day of a cycle."),
   });
 

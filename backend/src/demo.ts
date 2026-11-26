@@ -159,7 +159,7 @@ export async function seedDemo(db: Db, env: DemoEnv, now: Date = new Date()): Pr
   // ---- today is day 8 of a 14 day cycle ----
   const today = localDayNumber(now, TIMEZONE);
   const anchor = today - 7;
-  await db.query("update settings set client_name = 'Sample Client (Pty) Ltd', budget_hours = 45, cycle_days = 14, cycle_anchor = $1, min_timer_minutes = 1", [ymdOfDayNumber(anchor)]);
+  await db.query("update settings set client_name = 'Sample Client (Pty) Ltd', budget_hours = 45, cycle_days = 14, cycle_anchor = $1, min_timer_minutes = 15", [ymdOfDayNumber(anchor)]);
 
   interface Seed {
     who: string; project: ProjectKey; task: string; note: string; day: number; startMin: number; minutes: number;
