@@ -20,6 +20,8 @@ const schema = z.object({
   /** The one password all demo accounts share. At least 7 characters (trial only; keep it long if the site holds anything real). */
   DEMO_PASSWORD: z.string().optional(),
   /** "1" wipes the demo hours and starts the sample data again, on the next start. Ignored if real people have been added. */
+  /** Private display names for the demo accounts: "staff=Name; finance=Name". Kept out of the repository. */
+  DEMO_NAMES: z.string().optional(),
   DEMO_RESET: z.string().optional(),
   /** Set to "1" on the database host if it requires TLS (Render external URLs do). */
   DATABASE_SSL: z.string().optional(),

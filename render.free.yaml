@@ -59,6 +59,8 @@ services:
       # Never set DEMO_DATA on a real system.
       - key: DEMO_DATA
         value: "1"
+      - key: DEMO_NAMES
+        sync: false # optional display names: "staff=First Name; finance=Other Name". Never commit real names.
       - key: DEMO_PASSWORD
         sync: false # the one password all the demo accounts share (7 or more characters). Render only asks for this when a Blueprint is first created, so on an existing one add it under Environment.
 

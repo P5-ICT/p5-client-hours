@@ -62,7 +62,6 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <>
       <Header />
-      {ready && data.settings.demo && <TrialBanner />}
       {ready ? (
         children
       ) : loadError ? (
@@ -77,14 +76,6 @@ export function AppShell({ children }: { children: ReactNode }) {
       )}
       <Toast />
     </>
-  );
-}
-
-function TrialBanner() {
-  return (
-    <div role="note" className="border-b border-line bg-warn-soft px-4 py-2 text-center text-sm text-warn print:hidden">
-      <strong>Trial version.</strong> Everything here is sample data for testing. It can be reset at any time.
-    </div>
   );
 }
 

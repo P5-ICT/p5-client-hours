@@ -69,7 +69,8 @@ The free trial can come with ready-made test accounts and sample data, so collea
 | Setting | Value |
 |---|---|
 | `DEMO_DATA` | `1` (already in `render.free.yaml`) |
-| `DEMO_PASSWORD` | the one password everyone will use, 10 or more characters. Add it yourself: Render only asks for it when a Blueprint is first created |
+| `DEMO_PASSWORD` | the one password everyone will use, 7 or more characters. Add it yourself: Render only asks for it when a Blueprint is first created |
+| `DEMO_NAMES` | optional display names, such as `staff=First Name; finance=Other Name`. The keys are the part of each demo email before the `@`. Set it only in Render: colleagues' names do not belong in the repository |
 
 Save, and the service restarts and creates the accounts. The log shows `Demo data: seeded`. Every account uses the password you chose:
 
@@ -83,9 +84,11 @@ Save, and the service restarts and creates the accounts. The log shows `Demo dat
 | Admin | `admin@pillar5group.com` | Team and settings, department hours |
 | Client | `client@pillar5group.com` | What the client sees (approved hours only) |
 
+The other sample accounts are `developer3`, `database`, `finance`, `finance2`, `marketing` and `operations`, spread over the ICT, Database, Finance, Marketing, and Operations and Admin departments.
+
 The sample data tells the story from the guide: last cycle ended 7.5 hours over, this cycle is 33 of 50 hours with 11 hours waiting, and one entry was typed in by a manager.
 
-Safeguards while the trial is on: a banner says it is a trial; demo accounts cannot change the shared password; a demo admin cannot deactivate or reset a real account (yours); and five wrong passwords lock an account for 5 minutes, which clears when you save the settings again.
+Safeguards while the trial is on: demo accounts cannot change the shared password; a demo admin cannot deactivate or reset a real account (yours); and five wrong passwords lock an account for 5 minutes, which clears when you save the settings again.
 
 **To start the sample data again** (after testers have left a mess): add `DEMO_RESET` = `1` to `p5-hours-api`, save, wait for the restart, then **delete `DEMO_RESET`** again. It wipes the hours and rebuilds the sample story. It refuses to run if real people (other than an admin) have been added.
 

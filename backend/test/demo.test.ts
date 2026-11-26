@@ -29,9 +29,9 @@ describe("seeding the demo data", () => {
     expect(users.rows.filter((u) => u.app_role === "manager")).toHaveLength(2); // two, so approving each other's work can be tried
 
     const s = await loadSettings(h.db);
-    expect(s).toMatchObject({ clientName: "Sample Client (Pty) Ltd", budgetHours: 45, cycleDays: 14 });
+    expect(s).toMatchObject({ clientName: "Our Client", budgetHours: 45, cycleDays: 14 });
     const shares = await h.db.query<{ name: string; allocated_hours: number }>("select name, allocated_hours from departments order by colour");
-    expect(shares.rows.map((d) => [d.name, d.allocated_hours])).toEqual([["Operations", 25], ["Administration", 12], ["Marketing", 8]]);
+    expect(shares.rows.map((d) => [d.name, d.allocated_hours])).toEqual([["ICT", 17], ["Database", 8], ["Marketing", 8], ["Finance", 6], ["Operations and Admin", 6]]);
 
     const now = cycleIndexAt(s, new Date());
     const current = await cycleTotals(h.db, s, now);
@@ -42,6 +42,16 @@ describe("seeding the demo data", () => {
     expect((await h.db.query("select 1 from entries where status = 'rejected'")).rowCount).toBe(1);
     expect((await h.db.query("select 1 from hour_extensions where hours = 5")).rowCount).toBe(1);
     expect((await h.db.query("select 1 from entries where logged_by is not null and status = 'pending'")).rowCount).toBe(1);
+  });
+
+  it("takes display names from DEMO_NAMES, also on a later start", async () => {
+    const h = await createHarness();
+    const nameOf = async (key: string) => (await h.db.query<{ name: string }>("select name from users where email = $1", [demoEmail(key)])).rows[0]!.name;
+    await seedDemo(h.db, { DEMO_PASSWORD: PASSWORD, DEMO_NAMES: " Staff = Alex Example ;nobody=Ignored; finance=" });
+    expect(await nameOf("staff")).toBe("Alex Example");
+    expect(await nameOf("finance")).toBe("Finance Officer One");
+    await seedDemo(h.db, { DEMO_PASSWORD: PASSWORD, DEMO_NAMES: "finance=Sam Sample" });
+    expect(await nameOf("finance")).toBe("Sam Sample");
   });
 
   it("lets every demo account sign in with the shared password", async () => {
